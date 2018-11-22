@@ -1,13 +1,21 @@
 from flask import Flask, make_response
 from datetime import datetime
 import re
-from fpdf import FPDF, HTMLMixin
+# from fpdf import FPDF, HTMLMixin
+from reportlab.platypus import SimpleDocTemplate, Paragraph, PageBreak, Image, Table, TableStyle
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.units import mm, inch, cm
+from reportlab.lib.enums import TA_LEFT
+from reportlab.lib import colors
+from io import BytesIO
 
 app = Flask(__name__)
+
 
 @app.route("/")
 def home():
     return "Hello, Flask!"
+
 
 @app.route("/hello/<name>")
 def hello_there(name):
@@ -21,56 +29,41 @@ def hello_there(name):
     if match_object:
         clean_name = match_object.group(0)
     else:
-        clean_name = "Friend"
+        clean_name = "Friends"
 
     content = "Hello there, " + clean_name + "! It's " + formatted_now
     return content
 
 
+# class CustomPDF(FPDF, HTMLMixin):
+#     # def header(self):
+#     #     # Set up a logo
+#     #     # self.image('snakehead.jpg', 10, 8, 33)
+#     #     self.set_font('Arial', 'B', 15)
 
-class CustomPDF(FPDF, HTMLMixin):
-    # def header(self):
-    #     # Set up a logo
-    #     # self.image('snakehead.jpg', 10, 8, 33)
-    #     self.set_font('Arial', 'B', 15)
- 
-    #     # Add an address
-    #     self.cell(100)
-    #     self.cell(0, 5, 'Mike Driscoll', ln=1)
-    #     self.cell(100)
-    #     self.cell(0, 5, '123 American Way', ln=1)
-    #     self.cell(100)
-    #     self.cell(0, 5, 'Any Town, USA', ln=1)
- 
-    #     # Line break
-    #     self.ln(20)
- 
-    def footer(self):
-        self.set_y(-10)
+#     #     # Add an address
+#     #     self.cell(100)
+#     #     self.cell(0, 5, 'Mike Driscoll', ln=1)
+#     #     self.cell(100)
+#     #     self.cell(0, 5, '123 American Way', ln=1)
+#     #     self.cell(100)
+#     #     self.cell(0, 5, 'Any Town, USA', ln=1)
 
-        self.set_font('Arial', 'I', 8)
- 
-        # Add a page number
-        page = 'Página ' + str(self.page_no()) + '/{nb}'
-        self.cell(0, 10, page, 0, 0, 'C')
-        
+#     #     # Line break
+#     #     self.ln(20)
+
+#     def footer(self):
+#         self.set_y(-10)
+
+#         self.set_font('Arial', 'I', 8)
+
+#         # Add a page number
+#         page = 'Página ' + str(self.page_no()) + '/{nb}'
+#         self.cell(0, 10, page, 0, 0, 'C')
+
 
 @app.route("/pdf")
 def pdf():
-    # pdf = CustomPDF()
-    # pdf.add_page()
-    # pdf.set_font("Arial", size=12)
-    # pdf.cell(200, 10, txt="Welcome to Python!", ln=1, align="C")
-    # pdf.output("simple_demo.pdf")
-    pdf = CustomPDF()
-    # Create the special value {nb}
-    pdf.alias_nb_pages()
-    pdf.add_page()
-    pdf.set_font('Arial', '', 12)
-    # line_no = 1
-    # for i in range(50):
-    #     pdf.cell(0, 10, txt="Line #{}".format(line_no), ln=1)
-    #     line_no += 1
     emitter_street = "C/ Manobre n 28, Local 2"
     emitter_cp = "07008 PALMA DE MALLORCA"
     emitter_tel = "656716108"
@@ -83,48 +76,91 @@ def pdf():
 
     date = "11-12-2017"
 
-
     header = "Obra: arreglo suelo sótano (local americano)"
     budget_num = "100-2017"
 
-    # pdf.cell(200, 10, txt=emitter_street, ln=1)
-    # pdf.cell(200, 10, txt="CLIENTE", ln=1, align="R")
-    table = """
-    <table border="0" align="center" width="100%">
-        <thead>
-            <tr>
-                <th width="60%"> </th>
-                <th width="40%" align="left">CLIENTE:</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>
-                      <table width="100%">
-                        <thead><tr><th width="100%"></th></tr></thead>
-                        <tr>
-                            <td>"""+emitter_street+"""</td>
-                        </tr>
-                        <tr>
-                            <td>"""+emitter_cp+"""</td>
-                        </tr>
-                        <tr>
-                            <td>"""+emitter_tel+"""</td>
-                        </tr>
-                        <tr>
-                            <td>"""+emitter_nif+"""</td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    """
-    pdf.write_html(table)
+    pdf_buffer = BytesIO()
+    # pagesize = (140 * mm, 216 * mm)
+    my_doc = SimpleDocTemplate(
+        pdf_buffer,
+        topMargin=0.5 * inch,
+        leftMargin=0.5 * inch,
+        rightMargin=0.5 * inch,
+        bottomMargin=0.5 * inch,
+        title="Recibo",
+        author="DITANA Servicios SL"
+    )
+    flowables = []
 
-    pdf.output("simple_demo.pdf")
+    sample_style_sheet = getSampleStyleSheet()
 
-    response = make_response(pdf.output(dest='S').encode('latin-1'))
+    brand_logo = Image("350x150.jpg")
+    brand_logo.hAlign = 'LEFT'
+
+    paragraph_1 = Paragraph("A title", sample_style_sheet['Heading1'])
+    paragraph_2 = Paragraph(
+        "Some normal body text",
+        sample_style_sheet['BodyText']
+    )
+
+    body_text_style = sample_style_sheet["BodyText"]
+    body_text_style.alignment = TA_LEFT
+
+    concepto_largo = "conceptosuperlargconceptosuperlargoconceptosuperlargoconceptosuperlargoconceptosuperlargoconceptosuperlargoconceptosuperlargooconconceptosuperlargoconceptosuperlargoceptosuperlargo"
+    concepto_corto = "fifiewfiewofihweoifhweoifhwoif"
+
+    concepto_largo = Paragraph(concepto_largo, body_text_style)
+    concepto_corto = Paragraph(concepto_corto, body_text_style)
+
+    data = [
+        ["Concepto", "Importe"]
+    ]
+
+    for i in range(0, 100):
+        if i % 2 == 0:
+            c = [concepto_corto, "342 €"]
+            data.append(c)
+        else:
+            c = [concepto_largo, "13 €"]
+            data.append(c)
+
+    table = Table(data, colWidths=[13.5 * cm, 5 * cm])
+    table.setStyle(TableStyle([
+        ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
+    ]))
+
+    flowables.append(brand_logo)
+    flowables.append(paragraph_1)
+    flowables.append(paragraph_2)
+    flowables.append(table)
+    flowables.append(PageBreak())
+
+    def add_page_number(canvas, doc):
+        canvas.saveState()
+        canvas.setFont('Times-Roman', 10)
+        page_number_text = "Página %d" % doc.page
+        canvas.drawCentredString(
+            10.5 * cm,
+            0.75 * cm,
+            page_number_text
+        )
+        canvas.restoreState()
+
+    my_doc.build(
+        flowables,
+        onFirstPage=add_page_number,
+        onLaterPages=add_page_number,
+    )
+
+    pdf_out = pdf_buffer.getvalue()
+    pdf_buffer.close()
+
+    # response = make_response(pdf.output(dest='S').encode('latin-1'))
+    response = make_response(pdf_out)
     response.headers.set('Content-Disposition', 'attachment', filename="simple_demo" + '.pdf')
     response.headers.set('Content-Type', 'application/pdf')
     return response
+
+
+# app.run(host='0.0.0.0', port=5000)
+app.run()
