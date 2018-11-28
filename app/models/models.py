@@ -1,4 +1,3 @@
-import mongoengine as db
 import mongoengine_goodjson as gj
 
 
