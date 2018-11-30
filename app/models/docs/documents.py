@@ -1,13 +1,13 @@
 from app import db
 import mongoengine_goodjson as gj
+from datetime import datetime
 
-
-class Concept(gj.EmbeddedDocument):
+class Concepts(gj.EmbeddedDocument):
     description = db.StringField()
     cost = db.DecimalField()
 
 
-class Document(gj.Document):
+class Documents(gj.Document):
     # EMITTER DATA
     emitter_name = db.StringField()
     emitter_address = db.StringField()
@@ -23,11 +23,11 @@ class Document(gj.Document):
     client_cif = db.StringField()
     doc_type = db.StringField()
     doc_type_description = db.StringField()
-    concepts = db.EmbeddedDocumentListField(Concept, default=[])
+    concepts = db.EmbeddedDocumentListField(Concepts, default=[])
     # COSTS DATA
     concepts_cost = db.DecimalField()
     IVA_percent = db.DecimalField()
     IVA_cost = db.DecimalField()
     total_cost = db.DecimalField()
     # DB DATA
-    c_date = db.DateTimeField()
+    c_date = db.DateTimeField(default=datetime.now())

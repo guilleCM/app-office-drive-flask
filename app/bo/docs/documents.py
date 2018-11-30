@@ -1,4 +1,4 @@
-from app.models.docs.documents import Document, Concept
+from app.models.docs.documents import Documents, Concepts
 
 
 class DocumentBO:
@@ -31,12 +31,12 @@ class DocumentBO:
     def insert(self):
         concepts_collection = []
         for concept in self.concepts:
-            embedded_concept = Concept(
+            embedded_concept = Concepts(
                 description=concept['description'],
                 cost=concept['cost']
             )
             concepts_collection.append(embedded_concept)
-        document = Document(
+        document = Documents(
             emitter_name=self.emitter_name,
             emitter_address=self.emitter_address,
             emitter_zip_code=self.emitter_zip_code,
@@ -57,8 +57,9 @@ class DocumentBO:
             total_cost=self.total_cost
         )
         document.save()
-        self._ORM = document
         self.c_date = document.c_date
+        self._ORM = document
+
 
     def get_id(self):
         return self._ORM.id

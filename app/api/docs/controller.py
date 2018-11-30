@@ -33,7 +33,7 @@ class Document(Resource):
             document_BO.insert()
             response = {
                 'status': 'ok',
-                'id': document_BO.get_id()
+                'id': str(document_BO.get_id())
             }
             return jsonify(response)
         except Exception as e:

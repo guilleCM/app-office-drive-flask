@@ -16,5 +16,5 @@ def not_found(error):
 
 if __name__ == '__main__':
     # LOG.info('running environment: %s', os.environ.get('ENV'))
-    app.config['DEBUG'] = os.environ.get('ENV') == 'development'
-    app.run(host='0.0.0.0', port=int(PORT))
+    # app.config['DEBUG'] = os.environ.get('ENV') == 'development'
+    app.run(host='0.0.0.0', port=int(PORT), debug=True)
