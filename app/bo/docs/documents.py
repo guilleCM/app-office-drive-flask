@@ -23,7 +23,8 @@ class DocumentBO:
         self.concepts = None
         # COSTS DATA
         self.concepts_cost = 0
-        self.IVA = 0
+        self.IVA_percent = 0
+        self.IVA_cost = 0
         self.total_cost = 0
         self.c_date = None
 
@@ -51,7 +52,8 @@ class DocumentBO:
             doc_type_description=self.doc_type_description,
             concepts=concepts_collection,
             concepts_cost=self.concepts_cost,
-            IVA=self.IVA,
+            IVA_percent=self.IVA_percent,
+            IVA_cost=self.IVA_cost,
             total_cost=self.total_cost
         )
         document.save()

@@ -11,6 +11,7 @@ class Document(gj.Document):
     # EMITTER DATA
     emitter_name = db.StringField()
     emitter_address = db.StringField()
+    emitter_city = db.StringField()
     emitter_zip_code = db.StringField()
     emitter_tel = db.StringField()
     emitter_nif = db.StringField()
@@ -25,7 +26,8 @@ class Document(gj.Document):
     concepts = db.EmbeddedDocumentListField(Concept, default=[])
     # COSTS DATA
     concepts_cost = db.DecimalField()
-    IVA = db.DecimalField()
+    IVA_percent = db.DecimalField()
+    IVA_cost = db.DecimalField()
     total_cost = db.DecimalField()
     # DB DATA
     c_date = db.DateTimeField()
