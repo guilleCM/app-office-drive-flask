@@ -64,6 +64,35 @@ class DocumentsBO:
     def get_id(self):
         return self._ORM.id
 
+    def filter_by_id(self, id):
+        document = Documents.objects(id=id).first()
+        self._ORM = document
+        self._set_data_from_ORM()
+
+    def _set_data_from_ORM(self):
+        # EMITTER DATA
+        self.emitter_name = self._ORM.emitter_name
+        self.emitter_address = self._ORM.emitter_address
+        self.emitter_zip_code = self._ORM.emitter_zip_code
+        self.emitter_city = self._ORM.emitter_city
+        self.emitter_tel = self._ORM.emitter_tel
+        self.emitter_nif = self._ORM.emitter_nif
+        # CLIENT DATA
+        self.client_name = self._ORM.client_name
+        self.client_address = self._ORM.client_address
+        self.client_zip_code = self._ORM.client_zip_code
+        self.client_city = self._ORM.client_city
+        self.client_cif = self._ORM.client_cif
+        self.doc_type = self._ORM.doc_type
+        self.doc_type_description = self._ORM.doc_type_description
+        self.concepts = self._ORM.concepts
+        # COSTS DATA
+        self.concepts_cost = self._ORM.concepts_cost
+        self.IVA_percent = self._ORM.IVA_percent
+        self.IVA_cost = self._ORM.IVA_cost
+        self.total_cost = self._ORM.total_cost
+        self.c_date = self._ORM.c_date
+
 
 class DocumentsCollectionBO(list):
     def count_by_year(self, year=datetime.now().year):
