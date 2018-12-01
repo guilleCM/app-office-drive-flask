@@ -2,6 +2,7 @@ from app import db
 import mongoengine_goodjson as gj
 from datetime import datetime
 
+
 class Concepts(gj.EmbeddedDocument):
     description = db.StringField()
     cost = db.DecimalField()
@@ -31,3 +32,4 @@ class Documents(gj.Document):
     total_cost = db.DecimalField()
     # DB DATA
     c_date = db.DateTimeField(default=datetime.now())
+    _active = db.BooleanField(default=True)

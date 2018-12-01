@@ -1,7 +1,8 @@
 from app.models.docs.documents import Documents, Concepts
+from datetime import datetime
+import json
 
-
-class DocumentBO:
+class DocumentsBO:
     def __init__(self):
         # ORM
         self._ORM = None
@@ -60,7 +61,31 @@ class DocumentBO:
         self.c_date = document.c_date
         self._ORM = document
 
-
     def get_id(self):
         return self._ORM.id
+
+
+class DocumentsCollectionBO(list):
+    def count_by_year(self, year=datetime.now().year):
+        datetime_format = '%Y-%m-%dT%H:%M:%SZ'
+        start_year = datetime.strptime(str(year)+'-01-01T00:00:00Z', datetime_format)
+        end_year = datetime.strptime(str(year+1)+'-01-01T00:00:00Z', datetime_format)
+        documents = Documents.objects(
+            c_date__gte=start_year,
+            c_date__lt=end_year
+        ).count()
+        return documents
+
+    def filter_by_year(self, year=datetime.now().year):
+        datetime_format = '%Y-%m-%dT%H:%M:%SZ'
+        start_year = datetime.strptime(str(year)+'-01-01T00:00:00Z', datetime_format)
+        end_year = datetime.strptime(str(year+1)+'-01-01T00:00:00Z', datetime_format)
+        documents = Documents.objects(
+            c_date__gte=start_year,
+            c_date__lt=end_year
+        )
+        [self.append(doc) for doc in documents]
+
+    def to_json(self):
+        return [json.loads(doc.to_json()) for doc in self]
 
