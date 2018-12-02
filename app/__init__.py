@@ -1,8 +1,14 @@
 import os
 import json
 import datetime
-from flask import Flask
+from flask import Flask, make_response
 from flask_mongoengine import MongoEngine
+from reportlab.platypus import SimpleDocTemplate, Paragraph, PageBreak, Image, Table, TableStyle
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.units import mm, inch, cm
+from reportlab.lib.enums import TA_LEFT
+from reportlab.lib import colors
+from io import BytesIO
 
 
 app = Flask(__name__)
