@@ -1,5 +1,6 @@
 from flask import request, jsonify
 from flask_restful import Resource
+import json
 
 from app.bo.users.users import UsersBO
 
@@ -9,9 +10,12 @@ class UsersLogin(Resource):
         incoming_data = request.json
         try:
             user_BO = UsersBO()
-            user_BO.filter_by_username(incoming_data['username'])
+            user_BO.login(incoming_data['username'], incoming_data['password'])
             response = {
                 'status': 'ok',
+                'user_data': json.loads(user_BO.to_json()),
+                'access_token': user_BO.access_token,
+                'refresh_token': user_BO.refresh_token
             }
             return jsonify(response)
         except Exception as e:

@@ -1,4 +1,5 @@
 from flask import request, jsonify, make_response
+from flask_jwt_extended import jwt_required
 from flask_restful import Resource
 from reportlab.platypus import SimpleDocTemplate, Paragraph, PageBreak, Image, Table, TableStyle
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
@@ -16,6 +17,7 @@ class Documents(Resource):
     def get(self):
         return jsonify({'status': 'ok', 'message': 'Get Doc!!!'})
 
+    @jwt_required
     def put(self):
         incoming_data = request.json
         try:

@@ -11,7 +11,7 @@ class Roles(gj.Document):
 
 class Users(gj.Document):
     username = db.StringField(unique=True)
-    password = db.StringField()
+    password = db.StringField(exclude_to_json=True)
     company_ref = db.ReferenceField(Companies, default=None)
     email = db.StringField()
     name = db.StringField()

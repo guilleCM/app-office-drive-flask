@@ -23,6 +23,14 @@ class UsersBO:
         self.access_token = None
         self.refresh_token = None
 
+    @staticmethod
+    def generate_hash(password):
+        return sha256.hash(password)
+
+    @staticmethod
+    def verify_hash(password, hash):
+        return sha256.verify(password, hash)
+
     def insert(self):
         roles_collection = []
         for rol in self.roles:
@@ -50,14 +58,6 @@ class UsersBO:
     def get_id(self):
         return self._ORM.id
 
-    @staticmethod
-    def generate_hash(password):
-        return sha256.hash(password)
-
-    @staticmethod
-    def verify_hash(password, hash):
-        return sha256.verify(password, hash)
-
     def login(self, username, password):
         user = Users.objects(username=username).first()
         if user is not None and self.verify_hash(password, user.password):
@@ -80,3 +80,6 @@ class UsersBO:
         self.tel = self._ORM.tel
         self.roles = self._ORM.roles
         self.c_date = self._ORM.c_date
+
+    def to_json(self):
+        return self._ORM.to_json(follow_reference=True)
