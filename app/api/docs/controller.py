@@ -1,5 +1,5 @@
 from flask import request, jsonify, make_response
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restful import Resource
 from reportlab.platypus import SimpleDocTemplate, Paragraph, PageBreak, Image, Table, TableStyle
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
@@ -21,6 +21,7 @@ class Documents(Resource):
     def put(self):
         incoming_data = request.json
         try:
+            current_user = get_jwt_identity()
             document_BO = DocumentsBO()
             document_BO.emitter_name = incoming_data['emitter_name']
             document_BO.emitter_address = incoming_data['emitter_address']

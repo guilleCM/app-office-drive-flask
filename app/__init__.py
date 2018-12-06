@@ -13,6 +13,9 @@ app.config.update(
 db = MongoEngine(app)
 
 app.config['JWT_SECRET_KEY'] = "jwt-secret-string"
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = False
+app.config['JWT_REFRESH_TOKEN_EXPIRES'] = False
+
 jwt = JWTManager(app)
 
 from app.api.controllers import api_module

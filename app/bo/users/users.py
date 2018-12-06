@@ -1,6 +1,8 @@
 from app.models.users.users import Users, Roles
 from passlib.hash import pbkdf2_sha256 as sha256
 from flask_jwt_extended import (create_access_token, create_refresh_token, jwt_required, jwt_refresh_token_required, get_jwt_identity, get_raw_jwt)
+import json
+
 
 class AuthenticationError(Exception):
     pass
@@ -61,10 +63,10 @@ class UsersBO:
     def login(self, username, password):
         user = Users.objects(username=username).first()
         if user is not None and self.verify_hash(password, user.password):
-            self.access_token = create_access_token(identity=username)
-            self.refresh_token = create_access_token(identity=username)
             self._ORM = user
             self._set_data_from_ORM()
+            self.access_token = create_access_token(identity=self.to_dict())
+            self.refresh_token = create_access_token(identity=self.to_dict())
         else:
             raise AuthenticationError("Not valid credentials.")
 
@@ -80,6 +82,9 @@ class UsersBO:
         self.tel = self._ORM.tel
         self.roles = self._ORM.roles
         self.c_date = self._ORM.c_date
+
+    def to_dict(self):
+        return json.loads(self._ORM.to_json(follow_reference=True))
 
     def to_json(self):
         return self._ORM.to_json(follow_reference=True)
