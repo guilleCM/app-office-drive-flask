@@ -98,7 +98,7 @@ class DocumentsCollectionBO(list):
     def count_by_year(self, year=datetime.now().year):
         datetime_format = '%Y-%m-%dT%H:%M:%SZ'
         start_year = datetime.strptime(str(year)+'-01-01T00:00:00Z', datetime_format)
-        end_year = datetime.strptime(str(year+1)+'-01-01T00:00:00Z', datetime_format)
+        end_year = datetime.strptime(str(int(year)+1)+'-01-01T00:00:00Z', datetime_format)
         documents = Documents.objects(
             c_date__gte=start_year,
             c_date__lt=end_year
@@ -108,12 +108,28 @@ class DocumentsCollectionBO(list):
     def filter_by_year(self, year=datetime.now().year):
         datetime_format = '%Y-%m-%dT%H:%M:%SZ'
         start_year = datetime.strptime(str(year)+'-01-01T00:00:00Z', datetime_format)
-        end_year = datetime.strptime(str(year+1)+'-01-01T00:00:00Z', datetime_format)
+        end_year = datetime.strptime(str(int(year)+1)+'-01-01T00:00:00Z', datetime_format)
         documents = Documents.objects(
             c_date__gte=start_year,
             c_date__lt=end_year
-        )
+        ).order_by('-c_date')
         [self.append(doc) for doc in documents]
+
+    def get_distinct_set_of_years(self):
+        documents = Documents.objects.aggregate(*[
+            {"$project": {
+                "year": {"$year": "$c_date"},
+            }},
+            {"$group": {
+                "_id": None,
+                "distinctDate": {"$addToSet": {"year": "$year"}}
+            }}
+        ])
+        set_of_years = []
+        for doc in documents:
+            for year in doc['distinctDate']:
+                set_of_years.append(str(year['year']))
+        return {"years": set_of_years}
 
     def to_json(self):
         return [json.loads(doc.to_json()) for doc in self]

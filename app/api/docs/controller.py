@@ -23,12 +23,12 @@ class Documents(Resource):
         try:
             current_user = get_jwt_identity()
             document_BO = DocumentsBO()
-            document_BO.emitter_name = incoming_data['emitter_name']
-            document_BO.emitter_address = incoming_data['emitter_address']
-            document_BO.emitter_zip_code = incoming_data['emitter_zip_code']
-            document_BO.emitter_city = incoming_data['emitter_city']
-            document_BO.emitter_tel = incoming_data['emitter_tel']
-            document_BO.emitter_nif = incoming_data['emitter_nif']
+            document_BO.emitter_name = current_user['company_ref']['name']
+            document_BO.emitter_address = current_user['company_ref']['address']
+            document_BO.emitter_zip_code = current_user['company_ref']['zip_code']
+            document_BO.emitter_city = current_user['company_ref']['city']
+            document_BO.emitter_tel = current_user['company_ref']['tel']
+            document_BO.emitter_nif = current_user['company_ref']['nif']
             document_BO.client_name = incoming_data['client_name']
             document_BO.client_address = incoming_data['client_address']
             document_BO.client_zip_code = incoming_data['client_zip_code']
@@ -58,8 +58,9 @@ class Documents(Resource):
 class CountByYearDocuments(Resource):
     def get(self):
         try:
+            year = request.args['year']
             documents_BO = DocumentsCollectionBO()
-            count = documents_BO.count_by_year()
+            count = documents_BO.count_by_year(year=year)
             response = {
                 'status': 'ok',
                 'count': count
@@ -76,9 +77,23 @@ class CountByYearDocuments(Resource):
 class FilterByYearDocuments(Resource):
     def get(self):
         try:
+            year = request.args['year']
             documents_BO = DocumentsCollectionBO()
-            documents_BO.filter_by_year()
+            documents_BO.filter_by_year(year=year)
             return documents_BO.to_json()
+        except Exception as e:
+            response = {
+                'status': 'ko',
+                'message': str(e)
+            }
+            return jsonify(response)
+
+
+class DistinctSetOfYearsDocuments(Resource):
+    def get(self):
+        try:
+            documents_BO = DocumentsCollectionBO()
+            return documents_BO.get_distinct_set_of_years()
         except Exception as e:
             response = {
                 'status': 'ko',
