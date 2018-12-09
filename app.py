@@ -3,8 +3,7 @@ from flask import jsonify, make_response, send_from_directory
 
 from app import app
 
-# Port variable to run the server on.
-PORT = os.environ.get('PORT')
+
 PORT = 5000
 
 
@@ -17,4 +16,4 @@ def not_found(error):
 if __name__ == '__main__':
     # LOG.info('running environment: %s', os.environ.get('ENV'))
     # app.config['DEBUG'] = os.environ.get('ENV') == 'development'
-    app.run(host='0.0.0.0', port=int(PORT), debug=True)
+    app.run(host='0.0.0.0', port=int(PORT))
