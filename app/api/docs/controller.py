@@ -56,6 +56,7 @@ class Documents(Resource):
 
 
 class CountByYearDocuments(Resource):
+    @jwt_required
     def get(self):
         try:
             year = request.args['year']
@@ -75,6 +76,7 @@ class CountByYearDocuments(Resource):
 
 
 class FilterByYearDocuments(Resource):
+    @jwt_required
     def get(self):
         try:
             year = request.args['year']
@@ -90,6 +92,7 @@ class FilterByYearDocuments(Resource):
 
 
 class DistinctSetOfYearsDocuments(Resource):
+    @jwt_required
     def get(self):
         try:
             documents_BO = DocumentsCollectionBO()
@@ -103,6 +106,7 @@ class DistinctSetOfYearsDocuments(Resource):
 
 
 class GetPdfDocuments(Resource):
+    @jwt_required
     def get(self):
         id = request.args['id']
         documents_BO = DocumentsBO()
