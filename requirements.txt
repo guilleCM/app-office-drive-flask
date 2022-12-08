@@ -2,11 +2,11 @@ alabaster==0.7.12
 argparse==1.4.0
 aniso8601==4.0.1
 Babel==2.6.0
-certifi==2018.10.15
+certifi==2022.12.7
 chardet==3.0.4
 Click==7.0
 colorama==0.4.1
-certifi==2018.10.15
+certifi==2022.12.7
 colorama==0.4.1
 dateutils==0.6.6
 docutils==0.14
